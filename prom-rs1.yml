@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: myprom
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      env: dev
+      app: prom
+  template:
+    metadata:
+      name: myprom
+      labels:
+        env: dev
+        app: prom
+    spec:
+      containers:
+      - name: "promcon1"
+        image: "vimal13/prometheus"
+        ports:
+        volumeMounts:
+         - name: prom-vol1
+           mountPath: /prometheus 
+         - name: prom-configmap1
+           mountPath: /etc/prometheus/prometheus.yml
+           subPath: prometheus.yml
+      volumes:
+       - name: prom-vol1 
+         persistentVolumeClaim: 
+           claimName: prompvc1
+       - name: prom-configmap1
+         configMap:
+            name: prom-configmap
+
